@@ -1,0 +1,16 @@
+/vendor/
+
+.DS_Store
+
+.env.local
+.env.*.local
+
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+/var/docker/

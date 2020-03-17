@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  php-cli:
+    build:
+      context: ./docker
+      dockerfile: php-cli.docker
+    restart: always
+    volumes:
+      - .:/app
+    depends_on:
+      - rabbit-mq
+    links:
+      - rabbit-mq
+
+  rabbit-mq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_ERLANG_COOKIE: 6085e2412b6fa88647466c6a81c0cea0
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+      RABBITMQ_DEFAULT_VHOST: vhost
+
+  redis:
+    image: redis:5.0-alpine
+    restart: always
+    volumes:
+      - ./var/docker/redis:/data

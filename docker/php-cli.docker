@@ -1,0 +1,20 @@
+FROM php:7.4-cli-alpine
+
+RUN docker-php-ext-install bcmath sockets
+
+ENV PHPREDIS_VERSION 3.0.0
+RUN mkdir -p /usr/src/php/ext/redis \
+    && curl -L https://github.com/phpredis/phpredis/archive/$PHPREDIS_VERSION.tar.gz | tar xvz -C /usr/src/php/ext/redis --strip 1 \
+    && echo 'redis' >> /usr/src/php-available-exts \
+    && docker-php-ext-install redis
+
+RUN apk add unzip
+ENV COMPOSER_ALLOW_SUPERUSER 1
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/bin --filename=composer --quiet \
+    && rm -rf /root/.composer/cache
+
+RUN apk add supervisor
+ADD ./supervisord.conf /etc/supervisord.conf
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+
+WORKDIR /app
